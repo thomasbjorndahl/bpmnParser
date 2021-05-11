@@ -80,8 +80,8 @@ namespace bjorndahl.Parsers
                 {
                     var child = AllTasks.Where(t => t.Id.Equals(task.TargetRef, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                     if(null != child)
-                    {
-                        elm.Children.AddAndReturn(child);
+                    {                        
+                        elm.Children.AddAndReturn(child, parameter);
                         FindChildren(child);
                     }
                     

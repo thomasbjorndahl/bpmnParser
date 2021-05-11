@@ -9,6 +9,7 @@ namespace bjorndahl.Parsers
     public class BpmnTaskContainer : List<BpmnTask>, IDisposable
     {
         private BpmnTask _baseItem;
+        private string _parameter;
 
         public BpmnTaskContainer() { }
 
@@ -17,11 +18,19 @@ namespace bjorndahl.Parsers
             _baseItem = baseItem;
         }
 
-        public BpmnTask AddAndReturn(BpmnTask item)
+        public BpmnTask AddAndReturn(BpmnTask item) 
+        {
+            return AddAndReturn(item, string.Empty);
+        }
+
+        public BpmnTask AddAndReturn(BpmnTask item, string parameter)
         {
             Add(item);
+            _parameter = parameter;
             return item;
         }
+
+        public string Parameter { get { return _parameter; } }
 
         public void Dispose()
         {
