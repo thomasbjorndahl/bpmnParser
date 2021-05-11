@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bpmnParser", "BpmnParser\bpmnParser.csproj", "{ED979F48-9DF0-4D36-9913-1A07A37F8D20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{CD6BB0B1-376C-4ED6-866C-55EBDFD1F2E7}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BpmnParser.Tests", "BpmnParser.Tests\BpmnParser.Tests.csproj", "{FB117354-08EC-4BCC-84D5-D70DF1D52BD2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED979F48-9DF0-4D36-9913-1A07A37F8D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED979F48-9DF0-4D36-9913-1A07A37F8D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED979F48-9DF0-4D36-9913-1A07A37F8D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED979F48-9DF0-4D36-9913-1A07A37F8D20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB117354-08EC-4BCC-84D5-D70DF1D52BD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB117354-08EC-4BCC-84D5-D70DF1D52BD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB117354-08EC-4BCC-84D5-D70DF1D52BD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB117354-08EC-4BCC-84D5-D70DF1D52BD2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A658D441-683F-475D-9176-BBE4BFC083BB}
+	EndGlobalSection
+EndGlobal

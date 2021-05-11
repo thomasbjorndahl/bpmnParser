@@ -1,0 +1,8 @@
+/BpmnParser/obj
+/BpmnParser/bin
+/BpmnParser/Properties/keyfile.snk
+/BpmnParser.Tests/obj
+/BpmnParser.Tests/bin
+/packages
+/TestResults
+.vs
