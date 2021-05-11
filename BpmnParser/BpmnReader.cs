@@ -58,7 +58,7 @@ namespace bjorndahl.Parsers
                                         activeTask = _tasks.AddAndReturn(new BpmnServiceTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
                                         break;
                                     case "bpmn:exclusivegateway":
-                                        activeTask = _tasks.AddAndReturn(new BpmnExcluciveGatewayTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
+                                        activeTask = _tasks.AddAndReturn(new BpmnExclusiveGatewayTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
                                         break;
                                     case "bpmn:outgoing":
                                     case "bpmn:incoming":

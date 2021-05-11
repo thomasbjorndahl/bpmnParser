@@ -55,6 +55,7 @@
     <Compile Include="BpmnStartTask.cs" />
     <Compile Include="BpmnTask.cs" />
     <Compile Include="BpmnTaskContainer.cs" />
+    <Compile Include="BpmnTaskTypes.cs" />
     <Compile Include="BpmnTextAnnotation.cs" />
     <Compile Include="BpmnUserTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

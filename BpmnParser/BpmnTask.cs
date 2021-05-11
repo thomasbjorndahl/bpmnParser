@@ -14,6 +14,7 @@ namespace bjorndahl.Parsers
         private BpmnTaskContainer _children = new BpmnTaskContainer();
         protected string _elementType = "";
         private const string _prefix = "bpmn";
+        protected BpmnTaskTypes _taskType = BpmnTaskTypes.None;
 
         protected BpmnTask(string id)
         {
@@ -51,6 +52,8 @@ namespace bjorndahl.Parsers
         public string Id { get { return _id; } }
         public string Name { get { return _name; } }
         public string ElementType { get { return _prefix + ":" + _elementType; } }
+
+        public BpmnTaskTypes TaskType { get { return _taskType; } }
 
         public BpmnTaskContainer Children
         {

@@ -10,6 +10,7 @@
             this._sourceRef = sourceRef;
             this._targetRef = targetRef;
             _elementType = "sequenceFlow";
+            _taskType = BpmnTaskTypes.SequenceFlow;
         }
 
         public string SourceRef { get { return _sourceRef; } }

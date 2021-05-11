@@ -5,6 +5,7 @@
         public BpmnSendTask(string id, string name) : base(id, name)
         {
             _elementType = "sendTask";
+            _taskType = BpmnTaskTypes.SendTask;
         }
     }
 }

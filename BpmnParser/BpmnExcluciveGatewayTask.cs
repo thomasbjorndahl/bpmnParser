@@ -1,10 +1,11 @@
 ﻿namespace bjorndahl.Parsers
 {
-    public class BpmnExcluciveGatewayTask : BpmnTask
+    public class BpmnExclusiveGatewayTask : BpmnTask
     {
-        public BpmnExcluciveGatewayTask(string id, string name) : base(id, name) 
+        public BpmnExclusiveGatewayTask(string id, string name) : base(id, name) 
         {
             _elementType = "exclusiveGateway";
+            _taskType = BpmnTaskTypes.ExclusiveGateway;
         }
     }
 }

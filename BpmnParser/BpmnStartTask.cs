@@ -5,6 +5,7 @@
         public BpmnStartTask(string id, string name) : base(id, name) 
         {
             _elementType = "startEvent";
+            _taskType = BpmnTaskTypes.StartTask;
         }
     }
 }

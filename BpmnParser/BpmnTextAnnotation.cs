@@ -10,6 +10,7 @@
         public BpmnTextAnnotation(string id, string name) : base(id, name)
         {
             _elementType = "textAnnotation";
+            _taskType = BpmnTaskTypes.TextAnnotation;
         }
     }
 }
