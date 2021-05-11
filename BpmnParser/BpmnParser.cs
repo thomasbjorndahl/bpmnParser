@@ -26,6 +26,10 @@ namespace bjorndahl.Parsers
         /// </summary>
         protected BpmnParser() { }
 
+        /// <summary>
+        /// Constructor with diagram XML
+        /// </summary>
+        /// <param name="diagramXml"></param>
         public BpmnParser(string diagramXml) : base()
         {
             if (string.IsNullOrEmpty(diagramXml))
@@ -44,10 +48,11 @@ namespace bjorndahl.Parsers
             }            
         }
 
+
         private void Parse()
         {
             //First, find all start elements
-            var startElements = Tasks.Where(t => t is BpmnStartTask).ToList();
+            var startElements = AllTasks.Where(t => t is BpmnStartTask).ToList();
 
             if(null != startElements && startElements.Count() > 0)
             {
@@ -67,13 +72,13 @@ namespace bjorndahl.Parsers
         /// <param name="elm">The element</param>
         private void FindChildren(BpmnTask elm)
         {
-            var tasks = Tasks.Where(t => t is BpmnSequenceFlow).Where(t => ((BpmnSequenceFlow)t).SourceRef.Equals(elm.Id,StringComparison.OrdinalIgnoreCase));
+            var tasks = AllTasks.Where(t => t is BpmnSequenceFlow).Where(t => ((BpmnSequenceFlow)t).SourceRef.Equals(elm.Id,StringComparison.OrdinalIgnoreCase));
             foreach(BpmnSequenceFlow task in tasks)
             {
                 var parameter = task.Name;
                 if (!string.IsNullOrEmpty(task.TargetRef))
                 {
-                    var child = Tasks.Where(t => t.Id.Equals(task.TargetRef, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var child = AllTasks.Where(t => t.Id.Equals(task.TargetRef, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                     if(null != child)
                     {
                         elm.Children.AddAndReturn(child);
@@ -102,7 +107,7 @@ namespace bjorndahl.Parsers
         /// <summary>
         /// The tasks
         /// </summary>
-        public BpmnTaskContainer Tasks { get { return _reader?.Tasks; } }
+        public BpmnTaskContainer AllTasks { get { return _reader?.Tasks; } }
 
         /// <summary>
         /// True if the loaded diagram is valid
@@ -150,6 +155,7 @@ namespace bjorndahl.Parsers
             _diagramIsValid = false;
             _diagramException = null;
             _disposed = true;
+            _reader = null;
         }
        
     }

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace bjorndahl.Parsers
 {
+    /// <summary>
+    /// The container
+    /// </summary>
     public class BpmnTaskContainer : List<BpmnTask>, IDisposable
     {
         private BpmnTask _baseItem;

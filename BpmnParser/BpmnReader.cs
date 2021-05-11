@@ -10,7 +10,6 @@ namespace bjorndahl.Parsers
     {
         private string _diagramXml;
         private bool _disposed;
-        private XmlTextReader _reader;
         private BpmnTaskContainer _tasks;
 
         public BpmnReader(string diagramXml)
@@ -25,115 +24,86 @@ namespace bjorndahl.Parsers
         {
             try
             {
-                _reader = new XmlTextReader(new StringReader(_diagramXml));
-                BpmnTask activeTask = null;
-                BpmnStartTask activeStartTask = null;
-                Action<string> getOnNext = null;
-                
-                while (_reader.Read())
+                using (var _reader = new XmlTextReader(new StringReader(_diagramXml)))
                 {
-                    switch (_reader.NodeType)
+                    BpmnTask activeTask = null;
+                    BpmnStartTask activeStartTask = null;
+                    Action<string> getOnNext = null;
+                
+                    while (_reader.Read())
                     {
-                        default:
-                            if (null != getOnNext)
-                            {
-                                getOnNext(_reader.Value);
-                                getOnNext = null;
-                            }
-                            break;
-                        case XmlNodeType.Element:
-                            if ((_reader.Name ?? "").Equals("bpmn:startEvent", StringComparison.OrdinalIgnoreCase))
-                            {
-                                //Never mind start events
-                                //Starter tasks (circle at the start)
-                                //activeTask = template.SetDiagramTask(reader.GetAttribute("id"), reader.GetAttribute("name")); 
-                                activeStartTask = _tasks.AddAndReturn(new BpmnStartTask(_reader.GetAttribute("id"), _reader.GetAttribute("name"))) as BpmnStartTask;
-                                activeTask = activeStartTask;
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:userTask", StringComparison.OrdinalIgnoreCase))
-                            {
-                                //A manual task by the user
-                                activeTask = _tasks.AddAndReturn(new BpmnUserTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
-
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:sendTask", StringComparison.OrdinalIgnoreCase))
-                            {
-                                //A manual task by the user
-                                activeTask = _tasks.AddAndReturn(new BpmnUserTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
-
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:serviceTask", StringComparison.OrdinalIgnoreCase))
-                            {
-                                //A service task (process task)
-                                activeTask = _tasks.AddAndReturn(new BpmnServiceTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:exclusiveGateway", StringComparison.OrdinalIgnoreCase))
-                            {
-                                //Approval task
-                                activeTask = _tasks.AddAndReturn(new BpmnExcluciveGatewayTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
-                                //activeTask = decission;
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:incoming", StringComparison.OrdinalIgnoreCase))
-                            {
-                                if(null != activeTask)
+                        switch (_reader.NodeType)
+                        {
+                            default:
+                                if (null != getOnNext)
                                 {
-                                    getOnNext = (value) =>
-                                    {
-                                        if (!string.IsNullOrEmpty(value))
-                                        {
-                                            activeTask.AddIncomming(value);
-                                        }
-
-                                    };
+                                    getOnNext(_reader.Value);
+                                    getOnNext = null;
                                 }
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:outgoing", StringComparison.OrdinalIgnoreCase))
-                            {
-                                if (null != activeTask)
+                                break;
+                            case XmlNodeType.Element:
+                                switch( (_reader.Name ?? "").ToLowerInvariant())
                                 {
-                                    getOnNext = (value) =>
-                                    {
-                                        if (!string.IsNullOrEmpty(value))
+                                    case "bpmn:startevent":
+                                        activeStartTask = _tasks.AddAndReturn(new BpmnStartTask(_reader.GetAttribute("id"), _reader.GetAttribute("name"))) as BpmnStartTask;
+                                        activeTask = activeStartTask;
+                                        break;
+                                    case "bpmn:usertask":
+                                        activeTask = _tasks.AddAndReturn(new BpmnUserTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
+                                        break;
+                                    case "bpmn:sendtask":
+                                        activeTask = _tasks.AddAndReturn(new BpmnSendTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
+                                        break;
+                                    case "bpmn:servicetask":
+                                        activeTask = _tasks.AddAndReturn(new BpmnServiceTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
+                                        break;
+                                    case "bpmn:exclusivegateway":
+                                        activeTask = _tasks.AddAndReturn(new BpmnExcluciveGatewayTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
+                                        break;
+                                    case "bpmn:outgoing":
+                                    case "bpmn:incoming":
+                                        if (null != activeTask)
                                         {
-                                            activeTask.AddOutgoing(value);
+                                            getOnNext = (value) =>
+                                            {
+                                                if (!string.IsNullOrEmpty(value))
+                                                {
+                                                    if(_reader.Name.Equals("bpmn:incoming", StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        activeTask.AddIncomming(value);
+                                                    }
+                                                    if (_reader.Name.Equals("bpmn:outgoing", StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        activeTask.AddOutgoing(value);
+                                                    }                                                    
+                                                }
+                                            };
                                         }
-
-                                    };
-                                    
-                                }
-                            }
-                            else if((_reader.Name ?? "").Equals("bpmn:textAnnotation", StringComparison.OrdinalIgnoreCase))
-                            {
-                                activeTask = _tasks.AddAndReturn(new BpmnTextAnnotation(_reader.GetAttribute("id"),""));
-                                
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:text", StringComparison.OrdinalIgnoreCase))
-                            {
-                                if(null != activeTask && activeTask is BpmnTextAnnotation)
-                                {
-                                    getOnNext = (value) =>
-                                    {
-                                        if (!string.IsNullOrEmpty(value))
+                                        break;
+                                    case "bpmn:textannotation":
+                                        activeTask = _tasks.AddAndReturn(new BpmnTextAnnotation(_reader.GetAttribute("id"), ""));
+                                        break;
+                                    case "bpmn:text":
+                                        if (null != activeTask && activeTask is BpmnTextAnnotation)
                                         {
-                                            ((BpmnTextAnnotation)activeTask).Text = value;
+                                            getOnNext = (value) =>
+                                            {
+                                                if (!string.IsNullOrEmpty(value))
+                                                {
+                                                    ((BpmnTextAnnotation)activeTask).Text = value;
+                                                }
+                                            };
                                         }
-
-                                    };
-                                }
-                                
-                            }
-                            else if ((_reader.Name ?? "").Equals("bpmn:sequenceFlow", StringComparison.OrdinalIgnoreCase))
-                            {
-                                activeTask = _tasks.AddAndReturn(new BpmnSequenceFlow(_reader.GetAttribute("id"), _reader.GetAttribute("name"),  _reader.GetAttribute("sourceRef"), _reader.GetAttribute("targetRef")));                                
-                            }
-                            else
-                            {
-                                Debug.WriteLine(_reader.Name + " not implemented");
-                            }
-                            break;
+                                        break;
+                                    case "bpmn:sequenceflow":
+                                        activeTask = _tasks.AddAndReturn(new BpmnSequenceFlow(_reader.GetAttribute("id"), _reader.GetAttribute("name"), _reader.GetAttribute("sourceRef"), _reader.GetAttribute("targetRef")));
+                                        break;
+                                }                               
+                                break;
+                        }
                     }
+                    return true;
                 }
-                return true;
             }
             catch(Exception ex)
             {
@@ -160,7 +130,6 @@ namespace bjorndahl.Parsers
             }
 
             _diagramXml = null;
-            _reader = null;
             foreach(var item in _tasks)
             {
                 item.Dispose();

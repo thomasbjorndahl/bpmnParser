@@ -57,22 +57,22 @@ namespace bjorndahl.Parsers.Tests
             {
                 Assert.IsTrue(parser.DiagramIsValid, parser.Exception?.Message);
 
-                Assert.IsNotNull(parser.Tasks);
-                Assert.IsTrue(parser.Tasks.Count > 0);
+                Assert.IsNotNull(parser.AllTasks);
+                Assert.IsTrue(parser.AllTasks.Count > 0);
 
                 //Check if the parser have found user tasks
-                Assert.IsTrue(parser.Tasks.Where(t => t is BpmnUserTask).Count() > 0, "Did not contain any user task");
+                Assert.IsTrue(parser.AllTasks.Where(t => t is BpmnUserTask).Count() > 0, "Did not contain any user task");
 
                 //Check if the parser have found service tasks
-                Assert.IsTrue(parser.Tasks.Where(t => t is BpmnServiceTask).Count() > 0, "Did not contain any service task");
+                Assert.IsTrue(parser.AllTasks.Where(t => t is BpmnServiceTask).Count() > 0, "Did not contain any service task");
 
                 //Check if the parser have found sequence tasks
-                Assert.IsTrue(parser.Tasks.Where(t => t is BpmnSequenceFlow).Count() > 0, "Did not contain any sequence task");
+                Assert.IsTrue(parser.AllTasks.Where(t => t is BpmnSequenceFlow).Count() > 0, "Did not contain any sequence task");
 
                 //Check if the parser have found start tasks
-                Assert.IsTrue(parser.Tasks.Where(t => t is BpmnStartTask).Count() > 0, "Did not contain any start task");
+                Assert.IsTrue(parser.AllTasks.Where(t => t is BpmnStartTask).Count() > 0, "Did not contain any start task");
 
-                Assert.AreEqual("Interface to be created", parser.Tasks.Where(t => t is BpmnStartTask).First().Name);
+                Assert.AreEqual("Interface to be created", parser.AllTasks.Where(t => t is BpmnStartTask).First().Name);
 
             }
         }
@@ -81,14 +81,44 @@ namespace bjorndahl.Parsers.Tests
         public void ExtendedWithChoosesTest()
         {
             var diagram = Diagram3();
-            using(var parser = new BpmnParser(diagram))
+            BpmnParser parser = null;
+            using (parser = new BpmnParser(diagram))
             {
                 var startTask = parser.Organized.First();
                 Assert.IsNotNull(startTask);
 
                 Assert.IsTrue(startTask.Children.Count() == 1);
 
+                //First task
+                var task = startTask.Children.First();
+                Assert.AreEqual("Input is of type IF", task.Name);
+
+                Assert.IsTrue(task.Children.Count() == 1);
+                task = task.Children.First();
+
+                Assert.AreEqual("bpmn:exclusiveGateway", task.ElementType);
+
+                Assert.IsTrue(task.Children.Count() == 2);
+                Assert.AreEqual("Create interface", task.Children.First().Name);
+                Assert.IsInstanceOfType(task.Children.First(), typeof(BpmnServiceTask));
+
+                Assert.AreEqual("Approve type", task.Children.Last().Name);
+                Assert.IsInstanceOfType(task.Children.Last(), typeof(BpmnUserTask));
+
+                task = task.Children.Last().Children.First();
+                Assert.IsNotNull(task);
+
+                Assert.AreEqual("bpmn:exclusiveGateway", task.ElementType);
+                Assert.IsTrue(task.Children.Count() == 2);
+
+                Assert.AreEqual("Create", task.Children.First().Name);
+                Assert.IsInstanceOfType(task.Children.First(), typeof(BpmnServiceTask));
+
+                Assert.AreEqual("Notify Initiator", task.Children.Last().Name);
+                Assert.IsInstanceOfType(task.Children.Last(), typeof(BpmnSendTask));
             }
+
+            Assert.IsNull(parser.Organized);
         }
 
         private string Diagram1()

@@ -47,12 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BpmnExcluciveGatewayTask.cs" />
     <Compile Include="BpmnParser.cs" />
     <Compile Include="BpmnReader.cs" />
+    <Compile Include="BpmnSendTask.cs" />
     <Compile Include="BpmnSequenceFlow.cs" />
+    <Compile Include="BpmnStartTask.cs" />
+    <Compile Include="BpmnTask.cs" />
     <Compile Include="BpmnTaskContainer.cs" />
+    <Compile Include="BpmnTextAnnotation.cs" />
+    <Compile Include="BpmnUserTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceTask.cs" />
+    <Compile Include="BpmnServiceTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

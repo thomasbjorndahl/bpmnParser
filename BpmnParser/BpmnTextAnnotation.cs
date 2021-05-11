@@ -1,5 +1,8 @@
 ﻿namespace bjorndahl.Parsers
 {
+    /// <summary>
+    /// Text annotation
+    /// </summary>
     public class BpmnTextAnnotation : BpmnTask
     {
         public string Text { get; set; }
