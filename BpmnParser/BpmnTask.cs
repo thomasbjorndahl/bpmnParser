@@ -4,36 +4,6 @@ using System.Diagnostics;
 
 namespace bjorndahl.Parsers
 {
-    public class BpmnStartTask : BpmnTask
-    {
-        public BpmnStartTask(string id, string name) : base(id, name) 
-        {
-            _elementType = "startEvent";
-        }
-    }
-    public class BpmnUserTask : BpmnTask
-    {
-        public BpmnUserTask(string id, string name) : base(id, name) 
-        {
-            _elementType = "userTask";
-        }
-    }
-    public class BpmnServiceTask : BpmnTask 
-    {
-        public BpmnServiceTask(string id, string name) : base(id, name) 
-        {
-            _elementType = "serviceTask";
-        }        
-    }
-
-    public class BpmnExcluciveGatewayTask : BpmnTask
-    {
-        public BpmnExcluciveGatewayTask(string id, string name) : base(id, name) 
-        {
-            _elementType = "exclusiveGateway";
-        }
-    }
-
     [DebuggerDisplay("{_id} - {_name} - {_elementType}")]
     public abstract class BpmnTask : IDisposable
     {

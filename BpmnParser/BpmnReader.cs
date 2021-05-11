@@ -29,6 +29,7 @@ namespace bjorndahl.Parsers
                 BpmnTask activeTask = null;
                 BpmnStartTask activeStartTask = null;
                 Action<string> getOnNext = null;
+                
                 while (_reader.Read())
                 {
                     switch (_reader.NodeType)
@@ -50,6 +51,12 @@ namespace bjorndahl.Parsers
                                 activeTask = activeStartTask;
                             }
                             else if ((_reader.Name ?? "").Equals("bpmn:userTask", StringComparison.OrdinalIgnoreCase))
+                            {
+                                //A manual task by the user
+                                activeTask = _tasks.AddAndReturn(new BpmnUserTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
+
+                            }
+                            else if ((_reader.Name ?? "").Equals("bpmn:sendTask", StringComparison.OrdinalIgnoreCase))
                             {
                                 //A manual task by the user
                                 activeTask = _tasks.AddAndReturn(new BpmnUserTask(_reader.GetAttribute("id"), _reader.GetAttribute("name")));
@@ -94,29 +101,26 @@ namespace bjorndahl.Parsers
                                     };
                                     
                                 }
-                                //if (null != activeTask)
-                                //{
-                                //    if (activeTask.Type == WorkflowTasks.ApprovalTask)
-                                //    {
-                                //        //Assuming that this is the condition task
-                                //        if (string.IsNullOrEmpty(_reader.Value))
-                                //        {
-                                //            getOnNext = (value) =>
-                                //            {
-                                //                activeTask.Conditions.Add(new DiagramCondition() { Id = value });
-                                //            };
-                                //        }
-                                //        else
-                                //        {
-                                //            activeTask.Conditions.Add(new DiagramCondition() { Id = _reader.Value });
-                                //        }
-                                //    }
-                                //    else
-                                //    {
-                                //        activeTask.NextTask = _reader.Value;
-                                //    }
+                            }
+                            else if((_reader.Name ?? "").Equals("bpmn:textAnnotation", StringComparison.OrdinalIgnoreCase))
+                            {
+                                activeTask = _tasks.AddAndReturn(new BpmnTextAnnotation(_reader.GetAttribute("id"),""));
+                                
+                            }
+                            else if ((_reader.Name ?? "").Equals("bpmn:text", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if(null != activeTask && activeTask is BpmnTextAnnotation)
+                                {
+                                    getOnNext = (value) =>
+                                    {
+                                        if (!string.IsNullOrEmpty(value))
+                                        {
+                                            ((BpmnTextAnnotation)activeTask).Text = value;
+                                        }
 
-                                //}
+                                    };
+                                }
+                                
                             }
                             else if ((_reader.Name ?? "").Equals("bpmn:sequenceFlow", StringComparison.OrdinalIgnoreCase))
                             {
